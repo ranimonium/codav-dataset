@@ -85,8 +85,12 @@ for user in range(1,7):
       
     if "sms" in line_exbysemi[3]:
       if substr_exbybar[1] in ["sent","received"]:
-        outfiles["sms"].write(timestamp + 
-          ' '.join(line_exbysemi[4].split(',')))
+        print (str(["sent","received"].index(substr_exbybar[1])) + " " + 
+          timestamp + ' '.join(line_exbysemi[4].split(',')[:2]))
+
+        # print ' '.join(line_exbysemi[4].split(',')[:2])
+        # outfiles["sms"].write(timestamp + 
+        #   ' '.join(line_exbysemi[4].split(',')))
 
 
   for o in outfiles:
