@@ -1,0 +1,138 @@
+
+"""
+plan:
+.csv mother file
+handle invalid
+
+airplane
+241134;57855;2010-12-19T12:57:13.585+0000;airplane;off
+
+app
+- markets
+  1183333;173421600;2013-09-17T23:37:19.466+0100;app|markets;null,com.android.vending
+- start
+  154335;57917798;2013-01-27T05:28:55.640+0000;app|start;37
+-end
+  240865;141922143;2013-01-28T04:48:59.985+0000;app|end;
+-[pid]
+  4595;13673343;2013-01-25T13:20:55.298+0000;app|2926|starttime;16931
+  4596;13673343;2013-01-25T13:20:55.298+0000;app|2926|utime;11346
+  4597;13673344;2013-01-25T13:20:55.299+0000;app|2926|stime;1782
+  4598;13673347;2013-01-25T13:20:55.302+0000;app|5916|importance;background
+  4599;13673347;2013-01-25T13:20:55.302+0000;app|5916|name;uk.ac.cam.deviceanalyzer
+- recent
+  138394;42017750;2013-01-27T01:03:55.592+0000;app|recent|0;com.cyanogenmod.trebuchet/.Launcher
+  138395;42017751;2013-01-27T01:03:55.593+0000;app|recent|1;com.google.android.gm/.ui.MailActivityGmail
+  138402;42017754;2013-01-27T01:03:55.596+0000;app|recent|2;com.android.mms/.ui.ConversationList
+  138403;42017755;2013-01-27T01:03:55.597+0000;app|recent|3;com.zynga.words/.ui.launch.WordsMainActivity
+
+audio
+- ringermode
+  1107985;499389683;2011-01-03T04:28:40.411+0000;audio|ringermode;normal
+- volume
+  151941;55517631;2013-01-27T04:48:55.473+0000;audio|volume|system;0
+  151942;55517632;2013-01-27T04:48:55.474+0000;audio|volume|voicecall;5
+  152241;55817623;2013-01-27T04:53:55.465+0000;audio|volume|alarm;4
+  152242;55817628;2013-01-27T04:53:55.470+0000;audio|volume|dtmf;0
+  152243;55817629;2013-01-27T04:53:55.471+0000;audio|volume|music;12
+  152244;55817630;2013-01-27T04:53:55.472+0000;audio|volume|notification;0
+  152245;55817631;2013-01-27T04:53:55.473+0000;audio|volume|ring;0
+- maxvolume
+  2096082;189938816;(invalid date);audio|maxvolume|system;7
+  2096083;189938817;(invalid date);audio|maxvolume|voicecall;5
+  2096110;190048023;(invalid date);audio|maxvolume|alarm;7
+  2096111;190048024;(invalid date);audio|maxvolume|dtmf;15
+  2096112;190048026;(invalid date);audio|maxvolume|music;15
+  2096113;190048028;(invalid date);audio|maxvolume|notification;7
+  2096114;190048032;(invalid date);audio|maxvolume|ring;7
+
+conn
+  771762;33428335;2010-12-28T19:02:39.063+0000;conn|WIFI|state;DISCONNECTED
+  771763;33429504;2010-12-28T19:02:40.232+0000;conn|WIFI|detailedstate;IDLE
+  771764;33431371;2010-12-28T19:02:42.099+0000;conn|mobile|state;CONNECTED
+  771765;33431376;2010-12-28T19:02:42.104+0000;conn|mobile|detailedstate;CONNECTED
+
+hf
+- app
+  407682;180064354;2013-04-13T23:22:39.270+0100;hf|app;com.android.chrome/com.google.android.apps.chrome.Main
+- locked
+  407705;180066359;2013-04-13T23:22:41.275+0100;hf|locked;false
+
+memorycard
+  3163785;1483530200;2013-05-14T23:40:11.256+0100;memorycard|mounted;02f1a399c5d62f172c9c0cebd0e8d22e1b6fa5fa
+  3163786;1483530200;2013-05-14T23:40:11.256+0100;memorycard|info|size;13874561024
+  3163787;1483530201;2013-05-14T23:40:11.257+0100;memorycard|info|free;11600396288
+
+phone
+- activeoperator
+  1495710;387716387;2013-09-20T11:08:54.253+0100;phone|activeoperator;T-Mobile
+  1498738;389311531;2013-09-20T11:35:29.397+0100;phone|activeoperator;T-Mobile Orange
+- roaming
+  954687;3898810;2013-09-16T00:31:56.676+0100;phone|roaming;false
+- servicestate
+  1517632;400837342;2013-09-20T14:47:35.208+0100;phone|servicestate;outofservice
+  1518068;401000779;2013-09-20T14:50:18.645+0100;phone|servicestate;inservice
+  1518305;401008573;2013-09-20T14:50:26.439+0100;phone|servicestate;poweroff
+- celllocation
+  564692;935120125;2013-09-13T09:36:01.019+0100;phone|celllocation|cid;24b5ea36843204a1b13a3858575d4806b359e481
+  564693;935120125;2013-09-13T09:36:01.019+0100;phone|celllocation|lac;791192a92f0753f957f0f757087deb1a148bffbc
+  564694;935120125;2013-09-13T09:36:01.019+0100;phone|celllocation|psc;0a8c9578b54ad44f0aca0031ccfe7ac9cc65fdf6
+- signal
+  1372359;306400237;2013-09-19T12:33:38.103+0100;phone|signal|gsm;17
+- sim
+  954526;3898697;2013-09-16T00:31:56.563+0100;phone|sim|serial;6521791ca7ea3a2cff7c2196c254882269fc75ab
+  954527;3898697;2013-09-16T00:31:56.563+0100;phone|sim|operator;c11c06ca2c06539737f334f09154f8ad59181a46
+- ringing Device Analyzer also attempts to parse the number. If successful the following fields are appended to the number, like such: <number hash>,<validity>,<number type>,<country code source>
+  2424656;333784268;2013-09-26T18:13:35.261+0100;phone|ringing;6125e1aac7e12d5f834888a08183e27c82c0d885,valid,MOBILE,FROM_DEFAULT_COUNTRY,true
+- idle  <call duration in seconds>,<time needed to retrieve call duration in ms>
+  2531981;389508670;2013-09-27T09:42:19.663+0100;phone|idle;31,223
+  3545151;441933251;2013-10-03T12:03:38.282-0700;phone|idle;0,506
+
+power
+- battery
+  120967;732184161;2013-09-11T01:13:45.055+0100;power|battery|temperature;168
+  120968;732184161;2013-09-11T01:13:45.055+0100;power|battery|voltage;4271
+  120969;732184161;2013-09-11T01:13:45.055+0100;power|battery|health;2
+  120970;732184161;2013-09-11T01:13:45.055+0100;power|battery|plugged;0
+  120971;732184161;2013-09-11T01:13:45.055+0100;power|battery|present;true
+  120972;732184161;2013-09-11T01:13:45.055+0100;power|battery|status;3
+  120973;732184161;2013-09-11T01:13:45.055+0100;power|battery|technology;Li-ion
+  121620;732484158;2013-09-11T01:18:45.052+0100;power|battery|scale;100
+  121621;732484158;2013-09-11T01:18:45.052+0100;power|battery|level;99
+- charger
+  990693;33860036;2013-09-16T08:51:17.902+0100;power|charger;disconnected
+  1150033;152427052;2013-09-17T17:47:24.918+0100;power|charger;usb
+
+screen
+- brightness
+  700942;1011897518;2013-09-14T06:55:38.412+0100;screen|brightness|mode;manual
+  701399;1012197512;2013-09-14T07:00:38.406+0100;screen|brightness|level;161
+- power
+  931043;1144816316;2013-09-15T19:50:57.210+0100;screen|power;on hf
+  931056;1144832899;2013-09-15T19:51:13.793+0100;screen|power;off
+  932047;1145539471;2013-09-15T20:03:00.365+0100;screen|power;on
+
+sms <number hash>,<length>,<validity>,<number type>,<country code source>
+  613544;963234296;2013-09-13T17:24:35.190+0100;sms|sent;d8b1f957b9a504b022ca44dd2396b7d3dacb3030,132,valid,MOBILE,FROM_NUMBER_WITH_PLUS_SIGN,true
+  626713;970939998;2013-09-13T19:33:00.892+0100;sms|received;6405d98f0f0f7751633383585d180c06064c571a,40,valid,MOBILE,FROM_NUMBER_WITH_PLUS_SIGN,true
+  626714;970940421;2013-09-13T19:33:01.315+0100;sms|count|unread;1
+
+wifi
+- connected
+477473;885743536;2013-09-12T19:53:04.430+0100;wifi|connected|ed03acdb8f72ec60485880bdf09f2ef36e804f13|rssi;-88
+477474;885743536;2013-09-12T19:53:04.430+0100;wifi|connected|ed03acdb8f72ec60485880bdf09f2ef36e804f13|linkspeed;6
+477741;885745036;2013-09-12T19:53:05.930+0100;wifi|connected|ed03acdb8f72ec60485880bdf09f2ef36e804f13|ssid;243ae0fe07ed32b81cb23244c69b5dccc24fb127
+- scancomplete
+477014;885597837;2013-09-12T19:50:38.731+0100;wifi|scancomplete;12
+- scan
+17819;685771002;2013-09-10T12:20:11.896+0100;wifi|scan|f4259c310d18664205d8c83651b3363efcdc443f|level;-88
+17820;685771002;2013-09-10T12:20:11.896+0100;wifi|scan|f4259c310d18664205d8c83651b3363efcdc443f|frequency;2412
+17821;685771008;2013-09-10T12:20:11.902+0100;wifi|scan|f4259c310d18664205d8c83651b3363efcdc443f|capabilities;[ESS]
+17822;685771008;2013-09-10T12:20:11.902+0100;wifi|scan|159c291620de681f66f45d99ae454eb35829c19b|ssid;99234fa0e09af08b5f928b0a7a4a3c166e52ff85
+- state
+2742891;3124267;2013-09-28T10:10:09.298-0700;wifi|state;disabling
+2742892;3124505;2013-09-28T10:10:09.536-0700;wifi|state;disabled
+2746577;5485557;2013-09-28T10:49:30.588-0700;wifi|state;enabling
+2746578;5487156;2013-09-28T10:49:32.187-0700;wifi|state;enabled
+
+"""
