@@ -50,7 +50,7 @@ def processTimeStamp(line_exbysemi):
 
     #reused variable
     timestamp = ( str( (date(int(day[0]), int(day[1]), int(day[2])).weekday())/6.0 ) + " " + 
-      str(time[0]/23.0) + " " + str(0 if time[1] < 30 else 1 ) )
+      str(int(time[0])/23.0) + " " + str(0 if int(time[1]) < 30 else 1 ) )
 
   return timestamp + " "
 
@@ -85,7 +85,7 @@ for user in range(1,7):
       
     if "sms" in line_exbysemi[3]:
       if substr_exbybar[1] in ["sent","received"]:
-        outfiles[substr_exbybar[1]].write(timestamp + 
+        outfiles["sms"].write(timestamp + 
           ' '.join(line_exbysemi[4].split(',')))
 
 
