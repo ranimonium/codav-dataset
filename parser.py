@@ -101,8 +101,8 @@ for user in range(1,7):
         wifilines.append((timestamp + substr_exbybar[2]).split(','))
         # print (timestamp + substr_exbybar[2]).split(',')
         
-    if len(wifilines) > 100: # for testing
-      break
+    # if len(wifilines) > 100: # for testing
+    #   break
 
 
   numlist = []
