@@ -29,7 +29,7 @@ def makeDirs(user):
 def createOutFiles(user):
   userout = cwd + outdir + str(user) + "/"
   outfiles = {
-    'airplane' : open( userout + "airplane.ssv", 'a'),
+    # 'airplane' : open( userout + "airplane.ssv", 'a'),
   }
 
   # print folders
@@ -67,10 +67,21 @@ for user in range(1,7):
 
 
   smslines = []
+
+  prevlineinvalid = False
   #process each line from <user>.csv
   for line in open("dataset_raw/" + str(user) + ".csv", 'r'):
   # for line in open("samplelines.csv", 'r'):
     
+
+
+    if '(invalid date)' in line:
+      if prevlineinvalid:
+        break
+      prevlineinvalid = True
+      continue
+    else:
+      prevlineinvalid = False
     # line exploded by semicolon; parses date, fields, and values, 
     line_exbysemi = line[:-1].split(';')
 
@@ -90,7 +101,8 @@ for user in range(1,7):
         smslines.append((str(["sent","received"].index(substr_exbybar[1])) + "," + 
                   timestamp + ','.join(line_exbysemi[4].split(',')[:2])).split(',')) 
 
-    # if len(smslines) > 5: # for testing
+
+    # if len(smslines) > 10: # for testing
     #   break
 
 
@@ -102,10 +114,12 @@ for user in range(1,7):
         maxlength = int(l[5])
     except IndexError, e:
       pass
+    # print l
     if l[4] not in numlist:
       numlist.append(l[4])
 
-  # print numlist
+  print numlist
+  outfiles["sms"].write(str(numlist) + '\n')
 
   for l in smslines:
     length = 0
@@ -114,7 +128,9 @@ for user in range(1,7):
     
     indexlineout = [str(0) for i in range(len(numlist))]
     indexlineout[numlist.index(l[4])] = str(1)
-    print (  ' '.join(l[:4]) + ' ' + str(length) + ' ' + ' '.join(indexlineout) )
+    # print (  ' '.join(l[:4]) + ' ' + str(length) + ' ' + ' '.join(indexlineout)  + '\n')
+    outfiles["sms"].write(  ' '.join(l[:4]) + ' ' + str(length) + ' ' + ' '.join(indexlineout) + '\n')
+
 
   for o in outfiles:
     outfiles.get(o).close()
