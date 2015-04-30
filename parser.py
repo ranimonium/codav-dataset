@@ -3,7 +3,7 @@ from datetime import date
 
 
 cwd = os.getcwd()
-outdir = "/data-parsed_ANN/"
+outdir = "/data-parsed_ANN-wifi/"
 folders = {
 "":"", 
 # "app": ["pid","recent"], 
@@ -13,9 +13,10 @@ folders = {
         # "sim", "idle", "ringing"], 
 # "power": ["battery", "charger"], 
 # "screen": ["brightness", "power"],
-"sms": ["sms"]
+# "sms": ["sms"]
 # "sms": ["sent","received"],
 # "wifi": ["connected", "scancomplete", "scan", "state"]
+"wifi": ["connected"]
 
 }
 
@@ -66,7 +67,7 @@ for user in range(1,7):
   outfiles = createOutFiles(user)
 
 
-  smslines = []
+  wifilines = []
 
   prevlineinvalid = False
   #process each line from <user>.csv
@@ -94,42 +95,31 @@ for user in range(1,7):
 
     substr_exbybar = line_exbysemi[3].split('|')
 
-      
-    if "sms" in line_exbysemi[3]:
-      if substr_exbybar[1] in ["sent","received"]:
+    if "wifi" in line_exbysemi[3]:
+      if substr_exbybar[1] in ["connected"]:
+
+        wifilines.append((timestamp + substr_exbybar[2]).split(','))
+        # print (timestamp + substr_exbybar[2]).split(',')
         
-        smslines.append((str(["sent","received"].index(substr_exbybar[1])) + "," + 
-                  timestamp + ','.join(line_exbysemi[4].split(',')[:2])).split(',')) 
-
-
-    # if len(smslines) > 10: # for testing
-    #   break
+    if len(wifilines) > 100: # for testing
+      break
 
 
   numlist = []
-  maxlength = -1
-  for l in smslines:
-    try:
-      if int(l[5]) > maxlength:
-        maxlength = int(l[5])
-    except IndexError, e:
-      pass
-    # print l
-    if l[4] not in numlist:
-      numlist.append(l[4])
 
-  print numlist
-  outfiles["sms"].write(str(numlist) + '\n')
+  for l in wifilines:
+    # print l[3]
+    if l[3] not in numlist:
+      numlist.append(l[3])
 
-  for l in smslines:
-    length = 0
-    if maxlength != -1:
-      length = int(l[5])/(maxlength*1.00)
-    
+  # print str(numlist) + '\n'
+  outfiles["connected"].write(str(numlist) + '\n')
+
+  for l in wifilines:
     indexlineout = [str(0) for i in range(len(numlist))]
-    indexlineout[numlist.index(l[4])] = str(1)
-    # print (  ' '.join(l[:4]) + ' ' + str(length) + ' ' + ' '.join(indexlineout)  + '\n')
-    outfiles["sms"].write(  ' '.join(l[:4]) + ' ' + str(length) + ' ' + ' '.join(indexlineout) + '\n')
+    indexlineout[numlist.index(l[3])] = str(1)
+    # print   ( ' '.join(l[:3]) + ' ' + ' '.join(indexlineout) + '\n')
+    outfiles["connected"].write( ' '.join(l[:3]) + ' ' + ' '.join(indexlineout) + '\n')
 
 
   for o in outfiles:
