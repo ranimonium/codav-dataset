@@ -8,80 +8,101 @@ import matplotlib.pyplot as plt
 
 cwd = os.getcwd()
 
-# for user in range (1,7):
-for user in range (1,7):
 
-    #### PARSE AND FORMAT DATA ####
+def appname(type, line, week_data, directory):
 
-    rawdata = [line.strip() for line in open(cwd + "/data-parsed_ANN-sms/" + str(user) + "/sms/sms.ssv")]
+    # if name not in directory
+    if line[6] not in directory:
+        # add name to directory list
+        directory.append(line[6])
+        # and for each day of the week
+        for day in week_data.keys():
+            # and for each hour of the day
+            for h in range(24):
+                # add a  0 to allow space for the frequency of the name
+                week_data[day][h].append(0)
 
-    directory = rawdata[0]
-    rawdata = [line.split(" ") for line in rawdata[1:]]
+    # then we increment it by one
+    # print week_data
+    # print int(line[2])
+    # print weekday_dir[ int(line[2]) ]
+    # print line[3]
+    # print directory.index(line[6])
+    # print week_data[ weekday_dir[int(line[2])] ][int(line[3])]
+    # print week_data[ weekday_dir[int(line[2])] ][int(line[3])][ directory.index(line[6]) ]
+    week_data[ weekday_dir[int(line[2])] ][int(line[3])][ directory.index(line[6]) ] += 1
 
-    #### OPEN OUTPUT FILES ####
-    # fsent = open(cwd + "/data-parsed_PDF-sms-1/" + str(user) + "_sent.ssv","w")
-    # frecv = open(cwd + "/data-parsed_PDF-sms-1/" + str(user) + "_recv.ssv","w")
 
-    #### REBUILD DATASET ####
+def phone(type, line, week_data, directory):
+    pass
 
-    #lists times of day in decimal form
-    #serves as directory for the index and the times of day
-    #format of day in "rawdata" : x/23.0 ; x -> hour of the day
-    timeofday_dir_list = []
-    for i in range(24):
-        timeofday_dir_list.append(str(float(i/23.00))[:12])
-    # print timeofday_dir_list
+def power(type, line, week_data, directory):
+    pass
 
-    weekday_dir = {
-        str(float(0/6.0)) : "monday",
-        str(float(1/6.0)) : "tuesday",
-        str(float(2/6.0)) : "wednesday",
-        str(float(3/6.0)) : "thursday",
-        str(float(4/6.0)) : "friday",
-        str(float(5/6.0)) : "saturday",
-        str(float(6/6.0)) : "sunday",
+def sms(type, line, week_data, directory):
+    pass
+
+def wificonnected(type, line, week_data, directory):
+    pass
+
+
+
+
+
+
+# timestamp --> month day weekday hours minutes seconds
+
+fcns = {
+    "app-name" : appname, # timestamp appname
+    # "phone-calling" : phone, # timestamp phonenumber
+    # "phone-ringing" : phone, # timestamp phonenumber
+    # "power-battery" : power, # timestamp batterylevel
+    # "power-charger" : power, # timestamp sourcetype
+    # "sms-received" : sms, # timestamp phonenumber
+    # "sms-sent" : sms, # timestamp phonenumber
+    # "wifi-connected" : wificonnected, # timestamp bssid
     }
 
-    # template for 
-    data_dict = {}
-    for i in range(7):
-        data_dict[ weekday_dir[str(float(i/6.0))] ] = []
+weekday_dir = [
+    "monday", "tuesday", "wednesday",
+    "thursday", "friday", "saturday", "sunday"
+    ]
 
-    data_list = [copy.deepcopy(data_dict), copy.deepcopy(data_dict)]  # ["sent","received"]
 
-    # counts the number of sms recv/sent during the particular time of day and day of week
-    for line in rawdata:
-        # data_list[sent or recv][day of week]
-        # data_list[ int(line[0]) ][ weekday_dir[line[1]] ].append( str(line[2] )[:12])
-        data_list[ int(line[0]) ][ weekday_dir[line[1]] ].append(timeofday_dir_list.index( str(line[2] )[:12]))
-        # print line[1], str(line[2])
-    # generate normalized distribution function
-    # print data_list[0]["Monday"]
 
-    smstypes = ["sent","recv"]
-    smscolors = ["green","violet"]
-    for smstype in range(len(data_list)):
-        for day in weekday_dir.values():
-            data = data_list[smstype][day]
-            
-            fig, ax = plt.subplots()
+for user in range (1,7):
 
-            try:
-                hist, bins, a = plt.hist(data, bins=[i for i in range(24)], color=smscolors[smstype], normed=True)
-                ax.set_xticks(bins)
+    # stores your matrices
+    week_data = {}
+    for day in weekday_dir:
+        # stores your matrix for a single day
+        # this list contains empty lists that will soon store your 
+        # frequency distribution per name
+        week_data[day] = [[] for i in range(24)] 
 
-                plt.ylim([0,1])
-                plt.xlim([0,24])
 
-                plt.title("SMS " + smstypes[smstype].capitalize() + " on " + day.capitalize() + " - User " + str(user))
-                plt.ylabel("Probability")
-                plt.xlabel("Hours")
+    # stores contact numbers, ssid, battery level?, app names
+    directory = []
 
-                plt.savefig(cwd + "/data-parsed_PDF-sms-1/fig/1.0/" + str(user) + "-" + smstypes[smstype] + "-" + day + ".png")
-                plt.close(fig)
-                print "Saved: " + str(user) + "-" + smstypes[smstype] + "-" + day + ".png"
-            except Exception, e:
-                print e
-            # finally:
-            #     continue
+
+    for filename in fcns.keys():
+
+        #### READ DATA ####
+        rawdata = [(line.strip()).split(" ") for line in open(cwd + 
+            "/data-parsed-pdf/" + str(user) + "/" + filename + ".ssv")]
+
+        # try:
+
+        #### POPULATE DISTRIBUTION FCN ####
+        for line in rawdata:
+            fcns[filename](filename.split('-')[1], line, week_data, directory)
+        # except Exception, e:
+            # print line, e
+
+        print week_data
+        
+        #### PLOT 3D BAR GRAPH ####
+        
+
+        
 plt.close()

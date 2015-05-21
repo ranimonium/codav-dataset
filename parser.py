@@ -61,7 +61,10 @@ for user in range(1,7):
   #process each line from <user>.csv
   for line in open("dataset_raw/" + str(user) + ".csv", 'r'):
   # for line in open("samplelines.csv", 'r'):
-  
+    # count += 1
+    # if count > 150:
+    #   break
+
     # line exploded by semicolon; parses date, fields, and values, 
     line_exbysemi = line.split(';')
 
