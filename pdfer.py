@@ -45,8 +45,10 @@ def wificonnected(type, line, week_data, directory):
 
 # timestamp --> month day weekday hours minutes seconds
 fcns = {
-    "app-name" :    [appname, "Applications"], # timestamp appname
-    "phone-calling" : [phone, "Outgoing Calls"], # timestamp phonenumber
+    "app-name" :  [appname, "Applications"], # timestamp appname
+
+    "phone-calling" : \
+    [phone, "Outgoing Calls"], # timestamp phonenumber
     "phone-ringing" : [phone, "Incoming Calls"], # timestamp phonenumber
     "power-battery" : [power, "Battery Level"], # timestamp batterylevel
     "power-charger" : [power, "Battery Level"], # timestamp sourcetype
@@ -86,7 +88,6 @@ def plot3dbar(user, day, day_data, filename, m):
 
     fig = plt.figure()
     ax = Axes3D(fig, azim=45,elev=15)
-    # ax = fig.add_subplot(111, projection='3d')
 
     plt.ylabel(fcns[filename][1])
     plt.xlabel('Time of the Day (Hours)')
@@ -100,13 +101,11 @@ def plot3dbar(user, day, day_data, filename, m):
 
 
 
-for user in range (2,7):
+for user in range (1,7):
 
 
 
     for filename in fcns.keys():
-    # filename = "app-name"
-    # if filename == "app-name":
 
         # stores your matrices
         week_data = {}
@@ -117,14 +116,16 @@ for user in range (2,7):
             week_data[day] = [[] for i in range(24)] 
 
 
-        # stores contact numbers, ssid, battery level?, app names
-        directory = []
         #### READ DATA ####
         rawdata = [(line.strip()).split(" ") for line in open(cwd + 
             "/data-parsed-pdf/" + str(user) + "/" + filename + ".ssv")]
 
+        # stores contact numbers, ssid, battery level?, app names
+        directory = []
+
+
         try:
-        #### POPULATE DISTRIBUTION FCN ####
+            #### POPULATE DISTRIBUTION FCN ####
             for line in rawdata:
                 if "(invalid" in line:
                     break
@@ -133,38 +134,41 @@ for user in range (2,7):
         except Exception, e:
             print line, e
 
+        if filename == 'power-charger':
+            directory = ['disconnected', 'usb', 'ac']
+        elif filename == 'power-battery':
+            directory = [str(i) for i in range(101)]
+
         # print week_data
         
-        # max_per_day = []
-        # #### NORMALIZE AND PLOT ####
-        # for day in week_data:
-        #     s = 0
-        #     for d in week_data[day]:
-        #         s += sum(d)
+        max_per_day = []
+        #### NORMALIZE AND PLOT ####
+        for day in week_data:
+            s = 0
+            for d in week_data[day]:
+                s += sum(d)
 
-        #     if s == 0:
-        #         print("S IS 0 -- " + str(user) + " " + filename + " " + day)
-        #         s = 1
+            if s == 0:
+                print("S IS 0 -- " + str(user) + " " + filename + " " + day)
+                s = 1
             
-        #     m = 0
-        #     for hourlydata in week_data[day]:
-        #         for i in range(len(hourlydata)):
-        #             # print hourlydata[i]
-        #             hourlydata[i] = float(hourlydata[i])/s
-        #         if max(hourlydata) > m:
-        #             m = max(hourlydata)
-        #             # print m
+            m = 0
+            for hourlydata in week_data[day]:
+                for i in range(len(hourlydata)):
+                    hourlydata[i] = float(hourlydata[i])/s
+                if max(hourlydata) > m:
+                    m = max(hourlydata)
 
-        #     max_per_day.append(m)
+            max_per_day.append(m)
             
             ###  PLOT 3D BAR GRAPH  ###
             # plot3dbar(user, day, week_data[day], filename, m)
         print(str(user) + " print directory " + filename)
 
-        pdfile = open(cwd + "/data-pdf/user" + str(user) + "/pdfdata.py", "a")
-        # pdfile.write("max_per_day = " + str(max_per_day) + "\n")
-        # pdfile.write("week_data = " + str(week_data) + "\n\n")
-        pdfile.write( "\n" + "".join(filename.split('-')) + "_directory = " + str(directory) + "\n")
+        pdfile = open(cwd + "/data-pdf/user" + str(user) + "/pdfdata.py", "w")
+        pdfile.write("max_per_day = " + str(max_per_day) + "\n")
+        pdfile.write("week_data = " + str(week_data) + "\n")
+        pdfile.write( "\n" + "".join(filename.split('-')) + "_directory = " + str(directory) + "\n\n")
         pdfile.close()
         
 plt.close()
