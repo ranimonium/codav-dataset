@@ -3,14 +3,14 @@ from datetime import date
 
 
 cwd = os.getcwd()
-outdir = "/data-parsed-pdf/"
+outdir = "/data-parsed-ANN-phonecalls/"
 folders = {
-"":"", 
-"app": ["name"], 
-"phone": ["ringing", "calling"], 
-"power": ["battery", "charger"],
-"sms": ["sent","received"],
-"wifi": ["connected"]
+# "":"", 
+# "app": ["name"], 
+"phone": ["calls"], 
+# "power": ["battery", "charger"],
+# "sms": ["sent","received"],
+# "wifi": ["connected"]
 
 }
 
@@ -33,6 +33,7 @@ def createOutFiles(user):
 
   return outfiles
 
+
 def processTimeStamp(line_exbysemi):
   timestamp = line_exbysemi[2]
 
@@ -41,13 +42,12 @@ def processTimeStamp(line_exbysemi):
     day = timestamp[0].split('-')
     time = timestamp[1].split('.')[0].split(':')
 
+
     #reused variable
-    timestamp = (day[1] + " " + day[2] + " " + 
-      str(date(int(day[0]), int(day[1]), int(day[2])).weekday()) + " " + 
-      time[0] + " " + time[1] + " " + time[2] )
+    timestamp = ( str( (date(int(day[0]), int(day[1]), int(day[2])).weekday())/6.0 ) + "," + 
+      str(int(time[0])/23.0) + "," + str(0 if int(time[1]) < 30 else 1 ) )
 
-  return timestamp + " "
-
+  return timestamp + ","
 
 
 #iterate from user 1 to 6
@@ -57,7 +57,9 @@ for user in range(1,7):
   makeDirs(user)  
   outfiles = createOutFiles(user)
 
-  count = 0
+  # count = 0
+  calllines = []
+
   #process each line from <user>.csv
   for line in open("dataset_raw/" + str(user) + ".csv", 'r'):
   # for line in open("samplelines.csv", 'r'):
@@ -65,49 +67,49 @@ for user in range(1,7):
     # if count > 150:
     #   break
 
+    if "(invalid date)" in line:
+      if len(calllines) < 5:
+        continue
+      break
     # line exploded by semicolon; parses date, fields, and values, 
     line_exbysemi = line.split(';')
 
     #string to be printed out; contains just timestamp yet
     timestamp = processTimeStamp(line_exbysemi)
 
-
     ############## PARSE PER FIELD ##############
     
 
     substr_exbybar = line_exbysemi[3].split('|')
 
-    if "app|" in line_exbysemi[3]:
-
-      if len(substr_exbybar) > 2 and substr_exbybar[2] in ["name"]:
-        outfiles['name'].write(timestamp + line_exbysemi[4])
-
-
-    elif "phone|" in line_exbysemi[3]:
+    if "phone|" in line_exbysemi[3]:
 
       if substr_exbybar[1] in ["ringing","calling"]:
-        outfiles[substr_exbybar[1]].write(timestamp + 
-          ' '.join(line_exbysemi[4].split(',')))
+        # print line
+        calllines.append((str(["ringing","calling"].index(substr_exbybar[1])) + "," + 
+                  timestamp + ','.join(line_exbysemi[4].split(',')[:2])).split(',')) 
 
-    elif "sms" in line_exbysemi[3]:
-      if substr_exbybar[1] in ["sent","received"]:
-        outfiles[substr_exbybar[1]].write(timestamp + 
-          ' '.join(line_exbysemi[4].split(',')))
+      # if len(calllines) > 5: # for testing
+      #   break
 
+  numlist = []
+  for l in calllines:
+    print l
+    try:
+      if l[4] not in numlist:
+        numlist.append(l[4])
+    except Exception, e:
+      print e
 
-    elif "power|" in line_exbysemi[3]:
+  # print numlist
+  outfiles['calls'].write(str(numlist))
 
-      if "battery" == substr_exbybar[1] and substr_exbybar[2] == "level" :
-        outfiles[substr_exbybar[1]].write(timestamp + line_exbysemi[4])
-      if "charger" == substr_exbybar[1]:
-        outfiles[substr_exbybar[1]].write(timestamp + line_exbysemi[4])
-        
-
-    elif "wifi" in line_exbysemi[3]:
-
-      if substr_exbybar[1] in ["connected"] and substr_exbybar[3] == "ssid":
-        outfiles[substr_exbybar[1]].write(timestamp + substr_exbybar[2] + "\n")
-
+  for l in calllines:
+    
+    indexlineout = [str(0) for i in range(len(numlist))]
+    indexlineout[numlist.index(l[4])] = str(1)
+    # print (' '.join(l[:4]) + ' ' + ' '.join(indexlineout) + "\n")
+    outfiles['calls'].write(  ' '.join(l[:4]) + ' ' + ' '.join(indexlineout) + "\n")
 
   for o in outfiles:
     outfiles.get(o).close()
