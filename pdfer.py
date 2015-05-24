@@ -45,10 +45,8 @@ def wificonnected(type, line, week_data, directory):
 
 # timestamp --> month day weekday hours minutes seconds
 fcns = {
-    "app-name" :  [appname, "Applications"], # timestamp appname
-
-    "phone-calling" : \
-    [phone, "Outgoing Calls"], # timestamp phonenumber
+    # "app-name" :  [appname, "Applications"], # timestamp appname
+    "phone-calling" : [phone, "Outgoing Calls"], # timestamp phonenumber
     "phone-ringing" : [phone, "Incoming Calls"], # timestamp phonenumber
     "power-battery" : [power, "Battery Level"], # timestamp batterylevel
     "power-charger" : [power, "Battery Level"], # timestamp sourcetype
@@ -103,8 +101,6 @@ def plot3dbar(user, day, day_data, filename, m):
 
 for user in range (1,7):
 
-
-
     for filename in fcns.keys():
 
         # stores your matrices
@@ -144,18 +140,25 @@ for user in range (1,7):
         max_per_day = []
         #### NORMALIZE AND PLOT ####
         for day in week_data:
-            s = 0
-            for d in week_data[day]:
-                s += sum(d)
+            # s = 0
+            # for d in week_data[day]:
+            #     s += sum(d)
 
-            if s == 0:
-                print("S IS 0 -- " + str(user) + " " + filename + " " + day)
-                s = 1
+            # if s == 0:
+            #     print("S IS 0 -- " + str(user) + " " + filename + " " + day)
+            #     s = 1
             
             m = 0
             for hourlydata in week_data[day]:
-                for i in range(len(hourlydata)):
-                    hourlydata[i] = float(hourlydata[i])/s
+                
+                # s = sum(hourlydata)
+                # if s == 0:
+                #     print("S IS 0 -- " + str(user) + " " + filename + " " + day)
+                #     s = 1
+
+                # for i in range(len(hourlydata)):
+                #     hourlydata[i] = float(hourlydata[i])/s
+                
                 if max(hourlydata) > m:
                     m = max(hourlydata)
 
@@ -165,10 +168,10 @@ for user in range (1,7):
             # plot3dbar(user, day, week_data[day], filename, m)
         print(str(user) + " print directory " + filename)
 
-        pdfile = open(cwd + "/data-pdf/user" + str(user) + "/pdfdata.py", "w")
-        pdfile.write("max_per_day = " + str(max_per_day) + "\n")
-        pdfile.write("week_data = " + str(week_data) + "\n")
-        pdfile.write( "\n" + "".join(filename.split('-')) + "_directory = " + str(directory) + "\n\n")
+        pdfile = open(cwd + "/data-pdf-undivided/user" + str(user) + "/pdfdata.py", "a")
+        pdfile.write("".join(filename.split('-')) + "_max_per_day = " + str(max_per_day) + "\n")
+        pdfile.write("".join(filename.split('-')) + "_week_data = " + str(week_data) + "\n")
+        pdfile.write("".join(filename.split('-')) + "_directory = " + str(directory) + "\n\n")
         pdfile.close()
         
 plt.close()
