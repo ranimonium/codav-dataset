@@ -3,14 +3,16 @@ import random
 from motherpdfdata import *
 
 feature_dir = [
-    "phonecalling",
-    "phoneringing",
-    "powerbattery",
-    "powercharger",
-    "smsreceived",
-    "smssent",
-    "wificonnected",
+    # "phonecalling",
+    # "phoneringing",
+    # "powerbattery",
+    # "powercharger",
+    # "smsreceived",
+    # "smssent",
+    # "wificonnected"
+    "appname",
 ]
+
 
 weekday_dir = [
     "Monday", 
@@ -44,7 +46,7 @@ def pdfmaxerror():
     # print testdata
 testdata = []
 
-def pdfchoice2():
+def positives():
     # generate randomly from the motherpdf
     # we could go convert the whole data for a day to a presence or absence shit
     # then we could convert the shit
@@ -60,7 +62,9 @@ def pdfchoice2():
 
                     for index in indices_nonzeroelements:
                         feature_value = motherpdf['user' + str(u)][feature][2][index]
-                        testdata.append(('user' + str(u), feature, day, hour, feature_value))
+                        for iteration in xrange(random.randint(1,valuelistinhour[index])):
+                            testdata.append(('user' + str(u), feature, day, hour, feature_value))
 
-pdfchoice2()
+positives()
 # print "testdata \n\n", testdata, "\n\n"
+print "DONE Generating testdata for ", str([feature for feature in feature_dir])

@@ -2,13 +2,14 @@ from gen import *
 from motherpdfdata import *
 
 feature_dir = [
-    "phonecalling",
-    "phoneringing",
+    # "phonecalling",
+    # "phoneringing",
     # "powerbattery",
     # "powercharger",
-    "smsreceived",
-    "smssent",
-    "wificonnected",
+    # "smsreceived",
+    # "smssent",
+    # "wificonnected"
+    "appname",
 ]
 
 weekday_dir = [
@@ -61,7 +62,9 @@ for testline in testdata:
     except Exception, e:
         pass
 
-# print testpdf['user1']['phonecalling']['Monday']
+print testpdf['user1']['appname']['Monday']
+
+
 
 #### COMPARE TESTPDF WITH MOTHERPDF ####
 
@@ -99,86 +102,8 @@ def getconfidencelevel(score_perfeature_inaday, hour=""):
             totalscore = 0
             for feature in feature_dir:
                 score = (score_perfeature_inaday['user' + str(u)][day][feature]/denom)
-                print '\t\tScore', score
+                print '\t\tScore', feature,score
                 # print score
                 totalscore += score
-            print "\t\tCONFIDENCE LEVEL:", totalscore
-    # weight = 1.0/len(feature_dir)
-    # for u in range(1,7):
-    #     print "USER ", u
-    #     for day in weekday_dir:
-    #         print "\t", day
-    #         totalscore = 0
-    #         for feature in feature_dir:
-    #             score = score_perfeature_inaday['user' + str(u)][day][feature] 
-    #             totalscore += score*weight
-    #             print "\t\t", feature, hour, score*weight
-    #         print "CONFIDENCE LEVEL:", totalscore
+            print "\t\t\t\t\tCONFIDENCE LEVEL:", totalscore
 
-for u in range(1,7):
-    for feature in feature_dir:
-        # print feature
-        
-        for day in weekday_dir:
-
-            try:
-                for hourlydata in testpdf['user' + str(u)][feature][day]:
-                    
-                    score_perfeature_inaday_perhour = {}
-                    init_score_dict(score_perfeature_inaday_perhour)
-
-                    [hour, testval, newnumtime] = hourlydata
-                    indexatdirectory = motherpdf['user' + str(u)][feature][2].index(testval)
-                    orignumtime = motherpdf['user' + str(u)][feature][1][day][hour][indexatdirectory]
-                    
-                    maxfeature_ina_day = motherpdf['user' + str(u)][feature][3][weekday_dir.index(day)] #max in a feature for a day
-
-                    # DIVIDES ORIGNUM AND NEWNUM BY MAX OF THE DAY
-                    # divvalue_orig = float(orignumtime)/maxfeature_ina_day
-                    # divvalue_newnumtime = float(newnumtime)/maxfeature_ina_day
-                    
-                    divvalue_orig = float(orignumtime)
-                    divvalue_newnumtime = float(newnumtime)
-
-                    # threshold = divvalue_orig/3
-                    # print divvalue_orig, divvalue_newnumtime, threshold
-                    
-                    threshold = maxfeature_ina_day/float(10)
-
-                    score = 0
-                    if divvalue_orig >= maxfeature_ina_day/float(2):
-                        score = 1
-                    elif divvalue_orig >= maxfeature_ina_day/float(5):
-                        score = 0.5
-                    elif divvalue_orig >= maxfeature_ina_day/float(10):
-                        score = 0.25
-                    # elif divvalue_orig < maxfeature_ina_day/float(10):
-                        # score = -1
-                    elif divvalue_orig < maxfeature_ina_day/float(5):
-                        score = -0.5
-                    elif divvalue_orig < maxfeature_ina_day/float(2):
-                        score = -0.25
-
-
-                    score_perfeature_inaday['user' + str(u)][day][feature] += score
-                    score_perfeature_inaday_perhour['user' + str(u)][day][feature] += score
-
-                    # printvalues(score_perfeature_inaday_perhour, hour)
-
-            except Exception, e:
-                pass
-
-# printvalues(score_perfeature_inaday)
-getconfidencelevel(score_perfeature_inaday)
-
-
-
-                # print u, feature, day, hour, newnumtime, orignumtime, (1 - abs(float(newnumtime - orignumtime)/orignumtime))
-
-#index of shit
-# [hour, value, numberoftimes] = testpdf['user1']['phonecalling']['Monday'][0]
-# indexatdirectory = motherpdf['user1']['phonecalling'][2].index(value)
-# orignumtime = motherpdf['user1']['phonecalling'][1]['Monday'][hour][indexatdirectory]
-
-# print numberoftimes, orignumtime
-# print (1 - abs(float(numberoftimes - orignumtime)/orignumtime))
